@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Snake - Bonus Edition</title>
+    <style>
+        :root { --neon: #00ffcc; --pink: #ff0066; --gold: #ffcc00; }
+        * { touch-action: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; margin: 0; color: var(--neon); background: #000;
+            font-family: sans-serif; overflow: hidden;
+        }
+        
+        #startMenu { text-align: center; }
+        .run-btn { 
+            background: transparent; color: var(--neon); border: 3px solid var(--neon); 
+            padding: 20px 60px; font-size: 30px; font-weight: bold; cursor: pointer; 
+            border-radius: 50px; box-shadow: 0 0 15px var(--neon);
+        }
+
+        #gameContainer { display: none; text-align: center; width: 100%; }
+        canvas { border: 3px solid var(--neon); background: #000; max-width: 90vw; border-radius: 10px; }
+        
+        .side-settings {
+            position: fixed; right: -260px; top: 0; width: 220px; height: 100%;
+            background: #111; border-left: 2px solid var(--neon); transition: 0.4s; z-index: 100; padding: 20px;
+        }
+        .side-settings.active { right: 0; }
+        .settings-toggle { position: fixed; right: 20px; top: 20px; font-size: 30px; cursor: pointer; z-index: 101; opacity: 0.7; }
+
+        .btn-speed { display: block; width: 100%; padding: 12px; margin: 10px 0; background: transparent; border: 1px solid var(--neon); color: var(--neon); cursor: pointer; border-radius: 5px; }
+        .btn-speed.active { background: var(--neon); color: #000; font-weight: bold; }
+
+        .controls-grid { display: grid; grid-template-columns: repeat(3, 85px); gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-ctrl { 
+            width: 85px; height: 85px; background: #222; border: 2px solid var(--neon); 
+            color: var(--neon); border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; cursor: pointer;
+        }
+        .btn-ctrl:active { background: var(--pink); border-color: var(--pink); }
+
+        .triangle-up { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 15px solid currentColor; }
+        .triangle-down { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 15px solid currentColor; }
+        .triangle-left { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 15px solid currentColor; }
+        .triangle-right { width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 15px solid currentColor; }
+
+        .bonus-info { color: var(--gold); font-weight: bold; font-size: 18px; height: 20px; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="settings-toggle" onclick="toggleSettings()">⚙️</div>
+
+    <div id="sideSettings" class="side-settings">
+        <h3 style="text-align:center">السرعة</h3>
+        <button class="btn-speed" onclick="setSpeed(200, this)">بطيء</button>
+        <button class="btn-speed active" onclick="setSpeed(100, this)">متوسط</button>
+        <button class="btn-speed" onclick="setSpeed(60, this)">سريع</button>
+        <button onclick="toggleSettings()" style="width:100%; background:var(--neon); border:none; padding:10px; margin-top:20px; font-weight:bold; cursor:pointer;">إغلاق</button>
+    </div>
+
+    <div id="startMenu">
+        <button class="run-btn" onclick="startGame()">Run</button>
+    </div>
+
+    <div id="gameContainer">
+        <div class="bonus-info" id="bonusText"></div>
+        <div style="font-size:24px; margin-bottom:10px">SCORE: <span id="scoreVal">0</span></div>
+        <canvas id="snakeGame" width="400" height="400"></canvas>
+        
+        <div class="controls-grid">
+            <div style="grid-column: 2;" class="btn-ctrl" ontouchstart="goUp()" onmousedown="goUp()"><div class="triangle-up"></div></div>
+            <div style="grid-row: 2; grid-column: 1;" class="btn-ctrl" ontouchstart="goRight()" onmousedown="goRight()"><div class="triangle-right"></div></div>
+            <div style="grid-row: 2; grid-column: 2;" class="btn-ctrl" ontouchstart="goDown()" onmousedown="goDown()"><div class="triangle-down"></div></div>
+            <div style="grid-row: 2; grid-column: 3;" class="btn-ctrl" ontouchstart="goLeft()" onmousedown="goLeft()"><div class="triangle-left"></div></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("snakeGame");
+        const ctx = canvas.getContext("2d");
+        const box = 20;
+        let score = 0, selectedSpeed = 100, d = "RIGHT", gameLoop = null, snake = [], food = {};
+        
+        // متغيرات الجائزة
+        let foodCounter = 0;
+        let bonusActive = false;
+        let bonusFood = {x: -100, y: -100};
+        let bonusValue = 0;
+
+        function toggleSettings() { document.getElementById("sideSettings").classList.toggle("active"); }
+        function setSpeed(s, btn) {
+            selectedSpeed = s;
+            document.querySelectorAll('.btn-speed').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function startGame() {
+            document.getElementById("startMenu").style.display = "none";
+            document.getElementById("gameContainer").style.display = "block";
+            score = 0; d = "RIGHT"; foodCounter = 0; bonusActive = false;
+            snake = [{x: 10 * box, y: 10 * box}];
+            spawnFood();
+            if(gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(draw, selectedSpeed);
+        }
+
+        function goUp() { if(d != "DOWN") d = "UP"; }
+        function goDown() { if(d != "UP") d = "DOWN"; }
+        function goLeft() { if(d != "RIGHT") d = "LEFT"; }
+        function goRight() { if(d != "LEFT") d = "RIGHT"; }
+
+        function spawnFood() {
+            food = { x: Math.floor(Math.random()*19)*box, y: Math.floor(Math.random()*19)*box };
+        }
+
+        function spawnBonus() {
+            bonusActive = true;
+            bonusValue = 300;
+            bonusFood = { x: Math.floor(Math.random()*19)*box, y: Math.floor(Math.random()*19)*box };
+        }
+
+        function draw() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // رسم الثعبان
+            for(let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#00ffcc" : "#005544";
+                ctx.fillRect(snake[i].x, snake[i].y, box-1, box-1);
+            }
+
+            // رسم الطعام العادي
+            ctx.fillStyle = "#ff0066";
+            ctx.fillRect(food.x, food.y, box-1, box-1);
+
+            // منطق الجائزة الذهبية
+            if(bonusActive) {
+                ctx.fillStyle = "#ffcc00"; // لون ذهبي
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = "#ffcc00";
+                ctx.fillRect(bonusFood.x, bonusFood.y, box-1, box-1);
+                ctx.shadowBlur = 0; // إعادة الظل للوضع الطبيعي
+
+                bonusValue -= 5; // تنقص القيمة تدريجياً
+                document.getElementById("bonusText").innerText = "BONUS: " + bonusValue;
+
+                if(bonusValue <= 0) {
+                    bonusActive = false;
+                    document.getElementById("bonusText").innerText = "";
+                }
+            }
+
+            let headX = snake[0].x, headY = snake[0].y;
+            if(d == "LEFT") headX -= box; if(d == "UP") headY -= box;
+            if(d == "RIGHT") headX += box; if(d == "DOWN") headY += box;
+
+            // أكل الطعام العادي
+            if(headX == food.x && headY == food.y) {
+                score += 10;
+                foodCounter++;
+                document.getElementById("scoreVal").innerText = score;
+                spawnFood();
+                
+                if(foodCounter % 8 == 0) { spawnBonus(); }
+            } 
+            // أكل الجائزة الذهبية
+            else if(bonusActive && headX == bonusFood.x && headY == bonusFood.y) {
+                score += bonusValue;
+                document.getElementById("scoreVal").innerText = score;
+                bonusActive = false;
+                document.getElementById("bonusText").innerText = "WOW! +" + bonusValue;
+                setTimeout(() => { if(!bonusActive) document.getElementById("bonusText").innerText = ""; }, 1000);
+            }
+            else { snake.pop(); }
+
+            let head = {x: headX, y: headY};
+
+            if(headX < 0 || headX >= 400 || headY < 0 || headY >= 400 || snake.some(p => p.x == head.x && p.y == head.y)) {
+                clearInterval(gameLoop);
+                alert("Game Over! Score: " + score);
+                document.getElementById("gameContainer").style.display = "none";
+                document.getElementById("startMenu").style.display = "block";
+                return;
+            }
+            snake.unshift(head);
+        }
+    </script>
+</body>
+</html>
