@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة النور الدوائية | Al-Noor Pharma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --main: #0056b3; --whatsapp: #25D366; --light: #f4f7f6; }
+        body { font-family: 'Tajawal', sans-serif; margin: 0; background: var(--light); color: #333; line-height: 1.6; }
+        
+        /* شريط التواصل العلوي */
+        .top-bar { background: #003366; color: white; padding: 10px 5%; display: flex; justify-
+
+content: space-between; font-size: 14px; flex-wrap: wrap; }
+        .top-bar a { color: white; text-decoration: none; margin-left: 15px; transition: 0.3s; }
+        .top-bar a:hover { color: #ccc; }
+
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: bold; color: var(--main); }
+        nav a { margin-right: 20px; text-decoration: none; color: #333; font-weight: bold; }
+
+        .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=1200&q=80'); 
+                height: 50vh; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: 
+
+white; text-align: center; }
+
+        .section { padding: 60px 5%; }
+        .contact-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .info-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .info-item { display: flex; align-items: center; margin-bottom: 20px; }
+        .info-item i { font-size: 24px; color: var(--main); margin-left: 15px; width: 30px; }
+
+        /* نموذج المراسلة */
+        .form-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; box-sizing: border-box; }
+        .btn-send { background: var(--main); color: white; border: none; padding: 15px; border-
+
+radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        .btn-send:hover { background: #004494; }
+
+        /* زر الواتساب العائم */
+        .whatsapp-float { position: fixed; bottom: 20px; left: 20px; background: var(--whatsapp); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); z-index: 2000; text-decoration: none; }
+
+        footer { background: #111; color: white; text-align: center; padding: 30px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div>
+        <a href="mailto:ahmedsarhanalalwani@gmail.com"><i class="fas fa-envelope"></i> 
+
+ahmedsarhanalalwani@gmail.com</a>
+        <a href="https://wa.me/967730224838"><i class="fab fa-whatsapp"></i> 730224838</a>
+    </div>
+    <div>شركة النور الدوائية - جودة نثق بها</div>
+</div>
+
+<header>
+    <div class="logo">النور الدوائية</div>
+    <nav>
+        <a href="#home">الرئيسية</a>
+        <a href="#contact">تواصل معنا</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <div>
+        <h1>مرحباً بكم في شركة النور</h1>
+        <p>نحن هنا لخدمتكم وتقديم أفضل الحلول الدوائية</p>
+    </div>
+</section>
+
+<section class="section" id="contact">
+
+    <h2 style="text-align: center; margin-bottom: 40px;">تواصل معنا مباشرة</h2>
+    <div class="contact-container">
+        
+        <div class="info-box">
+            <h3>معلومات الاتصال</h3>
+            <div class="info-item">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <strong>الهاتف / واتساب:</strong><br>
+                    <a href="https://wa.me/967730224838" style="text-decoration:none; color:inherit;">730224838 967+</a>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <strong>البريد الإلكتروني:</strong><br>
+                    <a href="mailto:ahmedsarhanalalwani@gmail.com" style="text-decoration:none; color:inherit;">ahmedsarhanalalwani@gmail.com</a>
+
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                    <strong>العنوان:</strong><br>
+                    اليمن - الإدارة العامة
+                </div>
+            </div>
+        </div>
+
+        <div class="form-box">
+            <h3>أرسل رسالة سريعة</h3>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="اسمك الكامل" required>
+                <input type="email" id="email" placeholder="بريدك الإلكتروني" required>
+                <textarea id="message" rows="4" placeholder="كيف يمكننا مساعدتك؟" required></textarea>
+                <button type="submit" class="btn-send">إرسال الآن</button>
+            </form>
+
+            <div id="status" style="margin-top:15px; text-align:center; color: var(--main); font-weight: bold;"></div>
+        </div>
+
+    </div>
+</section>
+
+<a href="https://wa.me/967730224838" class="whatsapp-float" target="_blank" title="تواصل معنا عبر واتساب">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<footer>
+    <p>© 2026 شركة النور الدوائية | تم التصميم لخدمتكم</p>
+</footer>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        
+        // هنا يمكنك لاحقاً ربط Firebase كما شرحت لك سابقاً
+        const status = document.getElementById('status');
+        status.innerText = "جاري الإرسال...";
+
+        setTimeout(() => {
+            status.innerText = "شكراً لك سيد " + document.getElementById('name').value + "، تم استلام رسالتك بنجاح.";
+            document.getElementById('contactForm').reset();
+        }, 1500);
+    });
+</script>
+
+</body>
+</html>
